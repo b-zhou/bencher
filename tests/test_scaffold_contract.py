@@ -84,14 +84,22 @@ def test_single_objective_naming_is_uniform(path):
     """Every ObjectiveValue is named "f0", matching the scaffold's own convention.
 
     bencherscaffold's test helper is `single_objective(value, name="f0")`; clients
-    rely on objectives[0] being the objective regardless of family.
+    rely on objectives[0] being the objective regardless of family. Multi-objective
+    benchmarks number theirs with an f-string, f"f{i}", so objectives[0] is still f0.
     """
+    def is_numbered(node) -> bool:
+        return (isinstance(node, ast.JoinedStr) and len(node.values) == 2
+                and isinstance(node.values[0], ast.Constant) and node.values[0].value == "f"
+                and isinstance(node.values[1], ast.FormattedValue))
+
     wrong = []
     for call in _construction_calls(path):
         if call.func.id != "ObjectiveValue":
             continue
         for kw in call.keywords:
             if kw.arg == "name":
+                if is_numbered(kw.value):
+                    continue
                 if not (isinstance(kw.value, ast.Constant)
                         and kw.value.value == SINGLE_OBJECTIVE_NAME):
                     got = getattr(kw.value, "value", "<non-literal>")

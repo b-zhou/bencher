@@ -40,6 +40,21 @@ STOCHASTIC = {
     "mujoco-halfcheetah", "mujoco-swimmer", "mujoco-humanoid",
 }
 
+# Benchmarks returning more than one objective (f0, f1, ...), by objective count.
+# Everything else answers with exactly one, f0. These are the RE problems served
+# by NoDependencyBenchmark.
+MULTI_OBJECTIVE = {
+    "four-bar-truss": 2,
+    "hatch-cover": 2,
+    "two-bar-truss": 3,
+    "welded-beam": 3,
+    "disc-brake": 3,
+    "vehicle-safety": 3,
+    "rocket-injector": 3,
+    "car-side-impact": 4,
+    "conceptual-marine-design": 4,
+}
+
 # Too slow or too large to run on every sweep. Dimensionality is a decent proxy
 # (a fresh LassoBench problem is built per evaluation, and a MuJoCo rollout
 # scales with the policy size), plus a few known-slow small ones.
@@ -75,7 +90,7 @@ def all_benchmarks(registry: dict | None = None) -> list[dict]:
     """Every benchmark worth driving, with the point to drive it with.
 
     Each entry: name, dimensions, value_type (a ValueType *name*), fill,
-    deterministic, expensive.
+    deterministic, expensive, objectives.
     """
     registry = registry if registry is not None else load_registry()
     representatives = _bo4mob_representatives(registry)
@@ -97,6 +112,7 @@ def all_benchmarks(registry: dict | None = None) -> list[dict]:
             "fill": fill,
             "deterministic": name not in STOCHASTIC,
             "expensive": name in EXPENSIVE or dimensions > EXPENSIVE_ABOVE_DIMENSIONS,
+            "objectives": MULTI_OBJECTIVE.get(name, 1),
         })
     return entries
 

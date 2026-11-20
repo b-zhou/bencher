@@ -6,9 +6,10 @@ hand-picked sample: a benchmark added to the registry is driven here
 automatically. The one deliberate reduction is BO4Mob, where 420 templated names
 share a single code path and one per network is enough.
 
-Two things are checked per benchmark: that it answers with the single-objective
-shape clients rely on, and -- for the deterministic ones -- that its value has
-not drifted.
+Two things are checked per benchmark: that it answers with the objective shape
+clients rely on (one objective, or the declared count for the multi-objective
+ones in tests/benchmarks.py), and -- for the deterministic ones -- that its f0
+value has not drifted.
 """
 import math
 
@@ -23,21 +24,24 @@ def _point(benchmark):
 
 
 @pytest.mark.e2e
-def test_benchmark_answers_with_a_single_objective(client, benchmark, recorder, goldens):
+def test_benchmark_answers_with_its_declared_objectives(client, benchmark, recorder, goldens):
     """Every advertised benchmark must be reachable and answer in the MOBO shape.
 
-    This also records the value when run with --update-goldens, so a single
+    This also records the f0 value when run with --update-goldens, so a single
     sweep both verifies the stack and refreshes goldens.json.
     """
     name = benchmark["name"]
     result = client.evaluate_point(name, _point(benchmark))
 
     assert isinstance(result, EvaluationResult), f"{name} returned {type(result).__name__}"
-    assert len(result.objectives) == 1, (
-        f"{name} reported {len(result.objectives)} objectives, expected exactly one")
+    expected = benchmark["objectives"]
+    assert len(result.objectives) == expected, (
+        f"{name} reported {len(result.objectives)} objectives, expected {expected}")
+    names = [o.name for o in result.objectives]
+    assert names == [f"f{i}" for i in range(expected)], f"{name} named its objectives {names!r}"
+    for o in result.objectives:
+        assert math.isfinite(o.value), f"{name} returned {o.name}={o.value}"
     objective = result.objectives[0]
-    assert objective.name == "f0", f"{name} named its objective {objective.name!r}"
-    assert math.isfinite(objective.value), f"{name} returned {objective.value}"
 
     if recorder is not None and benchmark["deterministic"]:
         recorder[name] = objective.value

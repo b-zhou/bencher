@@ -323,6 +323,15 @@ The following benchmarks are available:
 | mopta08                    | 124          | continuous  | [^4],[^5], [^15] | &#x2612; | &#x2612;    |
 | mopta08-constrained        | 124          | continuous  | [^15]            | &#x2612; | &#x2611;    |
 | gramacy                    | 2            | continuous  | [^16]            | &#x2612; | &#x2611;    |
+| four-bar-truss             | 4            | continuous  | [^17]            | &#x2612; | &#x2612;    |
+| hatch-cover                | 2            | continuous  | [^17]            | &#x2612; | &#x2612;    |
+| two-bar-truss              | 3            | continuous  | [^17]            | &#x2612; | &#x2612;    |
+| welded-beam                | 4            | continuous  | [^17]            | &#x2612; | &#x2612;    |
+| disc-brake                 | 4            | continuous  | [^17]            | &#x2612; | &#x2612;    |
+| vehicle-safety             | 5            | continuous  | [^17]            | &#x2612; | &#x2612;    |
+| rocket-injector            | 4            | continuous  | [^17]            | &#x2612; | &#x2612;    |
+| car-side-impact            | 7            | continuous  | [^17]            | &#x2612; | &#x2612;    |
+| conceptual-marine-design   | 6            | continuous  | [^17]            | &#x2612; | &#x2612;    |
 | maxsat60                   | 60           | binary      | [^6],[^7]        | &#x2612; | &#x2612;    |
 | maxsat125                  | 125          | binary      | [^7]             | &#x2612; | &#x2612;    |
 | robotpushing               | 14           | continuous  | [^3]             | &#x2611; | &#x2612;    |
@@ -478,3 +487,4 @@ Optimization Methods and Software 36.1 (2021): 114-144.
 scenarios, values should be integers between 1 and 2000.
 [^15]: Jones, Donald; Anjos, Miguel. (2025). MOPTA 2008 Jones Benchmark, [dataset]. https://doi.org/10.7488/ds/7894.
 [^16]: Gramacy, Robert B., et al. "Modeling an augmented Lagrangian for blackbox constrained optimization." *Technometrics* 58.1 (2016): 1-11. https://doi.org/10.48550/arXiv.1403.4890
+[^17]: Tanabe, Ryoji, and Hisao Ishibuchi. "An easy-to-use real-world multi-objective optimization problem suite." *Applied Soft Computing* 89 (2020): 106078. https://doi.org/10.1016/j.asoc.2020.106078. These are multi-objective: they return 2 to 4 objectives `f0`, `f1`, ..., all to be minimized. Only the continuous RE problems are served; the mixed-integer and integer ones are currently not supported. Where the original problem had constraints, the last objective is the sum of constraint violations.

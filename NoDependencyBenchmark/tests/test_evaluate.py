@@ -11,6 +11,7 @@ from bencherscaffold.protoclasses.bencher_pb2 import ConstraintType, EvaluationR
 
 from nodependencybenchmark.main import (
     BENCHMARKS,
+    RE_PROBLEMS,
     NoDependencyServiceServicer,
     _pest_control_score,
     mopta_executable_basename,
@@ -33,7 +34,7 @@ def test_registry_shape_is_declared():
         "mopta08-constrained",
         "pestcontrol",
         "gramacy",
-    }
+    } | set(RE_PROBLEMS)
     assert BENCHMARKS["pestcontrol"]["dimensions"] == 25
 
 
@@ -184,3 +185,37 @@ class TestMopta08Constrained:
         """Checked before the binary is needed, so this runs on any architecture."""
         with pytest.raises(ValueError, match="does not match expected shape"):
             servicer.evaluate("mopta08-constrained", np.ones(3))
+
+
+class TestREProblems:
+    """Multi-objective RE problems (Tanabe & Ishibuchi, 2020), see re_problems.py."""
+
+    @pytest.mark.parametrize("name", sorted(RE_PROBLEMS))
+    def test_declared_dimension_matches_the_problem(self, name):
+        assert BENCHMARKS[name]["dimensions"] == RE_PROBLEMS[name]().n_variables
+
+    @pytest.mark.parametrize("name", sorted(RE_PROBLEMS))
+    def test_returns_numbered_finite_objectives(self, servicer, name):
+        n_objectives = RE_PROBLEMS[name]().n_objectives
+        result = servicer.evaluate(name, np.full(BENCHMARKS[name]["dimensions"], 0.5))
+        assert [o.name for o in result.objectives] == [f"f{i}" for i in range(n_objectives)]
+        assert all(np.isfinite(o.value) for o in result.objectives)
+        assert len(result.constraints) == 0
+
+    @pytest.mark.parametrize("name", sorted(RE_PROBLEMS))
+    def test_unit_cube_is_rescaled_to_the_problem_bounds(self, servicer, name):
+        """x in [0, 1]^n maps to lbound + x * (ubound - lbound) before evaluation."""
+        problem = RE_PROBLEMS[name]()
+        x = np.random.default_rng(0).random(problem.n_variables)
+        expected = problem.evaluate(problem.lbound + x * (problem.ubound - problem.lbound))
+        result = servicer.evaluate(name, x)
+        assert [o.value for o in result.objectives] == pytest.approx(expected)
+
+    @pytest.mark.parametrize("name", sorted(RE_PROBLEMS))
+    def test_is_deterministic(self, servicer, name):
+        x = np.full(BENCHMARKS[name]["dimensions"], 0.3)
+        assert servicer.evaluate(name, x) == servicer.evaluate(name, x)
+
+    def test_wrong_dimension_is_rejected(self, servicer):
+        with pytest.raises(ValueError, match="does not match expected shape"):
+            servicer.evaluate("vehicle-safety", np.ones(3))

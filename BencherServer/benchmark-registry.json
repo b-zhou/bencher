@@ -64,6 +64,51 @@
     "dimensions": 2,
     "type": "purely_continuous"
   },
+  "four-bar-truss": {
+    "port": 50054,
+    "dimensions": 4,
+    "type": "purely_continuous"
+  },
+  "hatch-cover": {
+    "port": 50054,
+    "dimensions": 2,
+    "type": "purely_continuous"
+  },
+  "two-bar-truss": {
+    "port": 50054,
+    "dimensions": 3,
+    "type": "purely_continuous"
+  },
+  "welded-beam": {
+    "port": 50054,
+    "dimensions": 4,
+    "type": "purely_continuous"
+  },
+  "disc-brake": {
+    "port": 50054,
+    "dimensions": 4,
+    "type": "purely_continuous"
+  },
+  "vehicle-safety": {
+    "port": 50054,
+    "dimensions": 5,
+    "type": "purely_continuous"
+  },
+  "rocket-injector": {
+    "port": 50054,
+    "dimensions": 4,
+    "type": "purely_continuous"
+  },
+  "car-side-impact": {
+    "port": 50054,
+    "dimensions": 7,
+    "type": "purely_continuous"
+  },
+  "conceptual-marine-design": {
+    "port": 50054,
+    "dimensions": 6,
+    "type": "purely_continuous"
+  },
   "maxsat60": {
     "port": 50055,
     "dimensions": 60,
