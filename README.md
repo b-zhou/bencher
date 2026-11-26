@@ -326,12 +326,11 @@ The following benchmarks are available:
 | four-bar-truss             | 4            | continuous  | [^17]            | &#x2612; | &#x2612;    |
 | hatch-cover                | 2            | continuous  | [^17]            | &#x2612; | &#x2612;    |
 | two-bar-truss              | 3            | continuous  | [^17]            | &#x2612; | &#x2612;    |
-| welded-beam                | 4            | continuous  | [^17]            | &#x2612; | &#x2612;    |
 | disc-brake                 | 4            | continuous  | [^17]            | &#x2612; | &#x2612;    |
-| vehicle-safety             | 5            | continuous  | [^17]            | &#x2612; | &#x2612;    |
 | rocket-injector            | 4            | continuous  | [^17]            | &#x2612; | &#x2612;    |
-| car-side-impact            | 7            | continuous  | [^17]            | &#x2612; | &#x2612;    |
 | conceptual-marine-design   | 6            | continuous  | [^17]            | &#x2612; | &#x2612;    |
+| water-resource-planning    | 3            | continuous  | [^17]            | &#x2612; | &#x2612;    |
+| car-cab-design             | 7            | continuous  | [^17]            | &#x2611; | &#x2612;    |
 | maxsat60                   | 60           | binary      | [^6],[^7]        | &#x2612; | &#x2612;    |
 | maxsat125                  | 125          | binary      | [^7]             | &#x2612; | &#x2612;    |
 | robotpushing               | 14           | continuous  | [^3]             | &#x2611; | &#x2612;    |

@@ -34,6 +34,7 @@ FILL_BY_TYPE = {
 # Everything else is expected to be reproducible.
 STOCHASTIC = {
     "pestcontrol",
+    "car-cab-design",
     "rover",
     "robotpushing",
     "mujoco-ant", "mujoco-hopper", "mujoco-walker",
@@ -47,12 +48,11 @@ MULTI_OBJECTIVE = {
     "four-bar-truss": 2,
     "hatch-cover": 2,
     "two-bar-truss": 3,
-    "welded-beam": 3,
     "disc-brake": 3,
-    "vehicle-safety": 3,
     "rocket-injector": 3,
-    "car-side-impact": 4,
     "conceptual-marine-design": 4,
+    "water-resource-planning": 6,
+    "car-cab-design": 9,
 }
 
 # Too slow or too large to run on every sweep. Dimensionality is a decent proxy

@@ -41,22 +41,20 @@ BENCHMARKS = {
     "pestcontrol": {"dimensions": 25, "type": "purely_categorical"},
     "gramacy": {"dimensions": 2, "type": "purely_continuous"},
     # Multi-objective real-world problems of the RE suite (Tanabe & Ishibuchi,
-    # 2020), see re_problems.py. Inputs are continuous in [0, 1].
-    # The mixed-integer and integer RE problems are commented out for now.
+    # 2020), see re_problems.py.
+    # The mixed-integer and integer problems are not used.
+    # VehicleSafety, CarSideImpact, and WeldedBeam have botorch implementations, so they are not served here.
     "four-bar-truss": {"dimensions": 4, "type": "purely_continuous"},
-    # "reinforced-concrete-beam": {"dimensions": 3, "type": ""},
-    # "pressure-vessel": {"dimensions": 4, "type": ""},
     "hatch-cover": {"dimensions": 2, "type": "purely_continuous"},
-    # "coil-compression-spring": {"dimensions": 3, "type": ""},
     "two-bar-truss": {"dimensions": 3, "type": "purely_continuous"},
-    "welded-beam": {"dimensions": 4, "type": "purely_continuous"},
+    # The botorch version of DiscBrake has a bug, so we serve the fixed RE version here.
     "disc-brake": {"dimensions": 4, "type": "purely_continuous"},
-    "vehicle-safety": {"dimensions": 5, "type": "purely_continuous"},
-    # "speed-reducer": {"dimensions": 7, "type": ""},
-    # "gear-train": {"dimensions": 4, "type": ""},
     "rocket-injector": {"dimensions": 4, "type": "purely_continuous"},
-    "car-side-impact": {"dimensions": 7, "type": "purely_continuous"},
     "conceptual-marine-design": {"dimensions": 6, "type": "purely_continuous"},
+    # RE61 with constraint g6 fixed (divides by x1*x2, as in the original problem).
+    "water-resource-planning": {"dimensions": 3, "type": "purely_continuous"},
+    # RE91 is stochastic; random_seed makes it repeatable.
+    "car-cab-design": {"dimensions": 7, "type": "purely_continuous"},
 }
 
 SUPPORTED_BENCHMARKS = list(BENCHMARKS)
@@ -64,19 +62,13 @@ SUPPORTED_BENCHMARKS = list(BENCHMARKS)
 # Benchmark name -> RE problem class.
 RE_PROBLEMS = {
     "four-bar-truss": re_problems.FourBarTruss,
-    # "reinforced-concrete-beam": re_problems.ReinforcedConcreteBeam,
-    # "pressure-vessel": re_problems.PressureVessel,
     "hatch-cover": re_problems.HatchCover,
-    # "coil-compression-spring": re_problems.CoilCompressionSpring,
     "two-bar-truss": re_problems.TwoBarTruss,
-    "welded-beam": re_problems.WeldedBeam,
     "disc-brake": re_problems.DiscBrake,
-    "vehicle-safety": re_problems.VehicleSafety,
-    # "speed-reducer": re_problems.SpeedReducer,
-    # "gear-train": re_problems.GearTrain,
     "rocket-injector": re_problems.RocketInjector,
-    "car-side-impact": re_problems.CarSideImpact,
     "conceptual-marine-design": re_problems.ConceptualMarineDesign,
+    "water-resource-planning": re_problems.WaterResourcePlanning,
+    "car-cab-design": re_problems.CarCabDesign,
 }
 
 
@@ -335,7 +327,10 @@ class NoDependencyServiceServicer(DualStackGRCPService):
             problem = RE_PROBLEMS[name]()
             # clients send [0, 1]^n; rescale to the problem's native bounds
             x = problem.lbound + x * (problem.ubound - problem.lbound)
-            f = problem.evaluate(x)
+            if name == "car-cab-design":
+                f = problem.evaluate(x, seed=seed)
+            else:
+                f = problem.evaluate(x)
             return EvaluationResult(
                 objectives=[
                     ObjectiveValue(name=f"f{i}", value=float(v))

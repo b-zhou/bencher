@@ -79,19 +79,9 @@
     "dimensions": 3,
     "type": "purely_continuous"
   },
-  "welded-beam": {
-    "port": 50054,
-    "dimensions": 4,
-    "type": "purely_continuous"
-  },
   "disc-brake": {
     "port": 50054,
     "dimensions": 4,
-    "type": "purely_continuous"
-  },
-  "vehicle-safety": {
-    "port": 50054,
-    "dimensions": 5,
     "type": "purely_continuous"
   },
   "rocket-injector": {
@@ -99,14 +89,19 @@
     "dimensions": 4,
     "type": "purely_continuous"
   },
-  "car-side-impact": {
-    "port": 50054,
-    "dimensions": 7,
-    "type": "purely_continuous"
-  },
   "conceptual-marine-design": {
     "port": 50054,
     "dimensions": 6,
+    "type": "purely_continuous"
+  },
+  "water-resource-planning": {
+    "port": 50054,
+    "dimensions": 3,
+    "type": "purely_continuous"
+  },
+  "car-cab-design": {
+    "port": 50054,
+    "dimensions": 7,
     "type": "purely_continuous"
   },
   "maxsat60": {

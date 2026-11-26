@@ -207,15 +207,22 @@ class TestREProblems:
         """x in [0, 1]^n maps to lbound + x * (ubound - lbound) before evaluation."""
         problem = RE_PROBLEMS[name]()
         x = np.random.default_rng(0).random(problem.n_variables)
-        expected = problem.evaluate(problem.lbound + x * (problem.ubound - problem.lbound))
-        result = servicer.evaluate(name, x)
+        x_native = problem.lbound + x * (problem.ubound - problem.lbound)
+        if name == "car-cab-design":
+            # car-cab-design is stochastic, so both sides need the same seed
+            expected = problem.evaluate(x_native, seed=0)
+            result = servicer.evaluate(name, x, seed=0)
+        else:
+            expected = problem.evaluate(x_native)
+            result = servicer.evaluate(name, x)
         assert [o.value for o in result.objectives] == pytest.approx(expected)
 
     @pytest.mark.parametrize("name", sorted(RE_PROBLEMS))
     def test_is_deterministic(self, servicer, name):
         x = np.full(BENCHMARKS[name]["dimensions"], 0.3)
-        assert servicer.evaluate(name, x) == servicer.evaluate(name, x)
+        seed = 7 if name == "car-cab-design" else None
+        assert servicer.evaluate(name, x, seed=seed) == servicer.evaluate(name, x, seed=seed)
 
     def test_wrong_dimension_is_rejected(self, servicer):
         with pytest.raises(ValueError, match="does not match expected shape"):
-            servicer.evaluate("vehicle-safety", np.ones(3))
+            servicer.evaluate("disc-brake", np.ones(3))
