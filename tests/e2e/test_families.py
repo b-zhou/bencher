@@ -41,6 +41,7 @@ def test_benchmark_answers_with_its_declared_objectives(client, benchmark, recor
     assert names == [f"f{i}" for i in range(expected)], f"{name} named its objectives {names!r}"
     for o in result.objectives:
         assert math.isfinite(o.value), f"{name} returned {o.name}={o.value}"
+    # TODO: also record multi-objective benchmarks?
     objective = result.objectives[0]
 
     if recorder is not None and benchmark["deterministic"]:

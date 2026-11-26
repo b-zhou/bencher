@@ -41,9 +41,8 @@ STOCHASTIC = {
     "mujoco-halfcheetah", "mujoco-swimmer", "mujoco-humanoid",
 }
 
-# Benchmarks returning more than one objective (f0, f1, ...), by objective count.
-# Everything else answers with exactly one, f0. These are the RE problems served
-# by NoDependencyBenchmark.
+# Number of objectives returned by each multi-objective benchmark.
+# TODO: maybe rename this to EXPECTED_OBJECTIVES or something, since it's used for validation also for the single-objective ones.
 MULTI_OBJECTIVE = {
     "four-bar-truss": 2,
     "hatch-cover": 2,

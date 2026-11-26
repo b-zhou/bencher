@@ -80,32 +80,37 @@ def test_every_service_constructs_an_evaluation_result():
 
 
 @pytest.mark.parametrize("path", service_main_files(), ids=rel)
-def test_single_objective_naming_is_uniform(path):
-    """Every ObjectiveValue is named "f0", matching the scaffold's own convention.
+def test_objective_naming_is_uniform(path):
+    """Every ObjectiveValue is named "f0", or numbered f"f{i}" for multi-objective
+    benchmarks, matching the scaffold's own convention.
 
     bencherscaffold's test helper is `single_objective(value, name="f0")`; clients
     rely on objectives[0] being the objective regardless of family. Multi-objective
     benchmarks number theirs with an f-string, f"f{i}", so objectives[0] is still f0.
     """
-    def is_numbered(node) -> bool:
-        return (isinstance(node, ast.JoinedStr) and len(node.values) == 2
-                and isinstance(node.values[0], ast.Constant) and node.values[0].value == "f"
-                and isinstance(node.values[1], ast.FormattedValue))
-
     wrong = []
     for call in _construction_calls(path):
         if call.func.id != "ObjectiveValue":
             continue
         for kw in call.keywords:
             if kw.arg == "name":
-                if is_numbered(kw.value):
+                # If name is of the form` f"f{i}"`, it's valid for multi-objective
+                # benchmarks.
+                if (
+                    isinstance(kw.value, ast.JoinedStr)  # name is f-string
+                    and len(kw.value.values) == 2
+                    and isinstance(kw.value.values[0], ast.Constant)
+                    and kw.value.values[0].value == "f"
+                    and isinstance(kw.value.values[1], ast.FormattedValue)
+                ):
                     continue
                 if not (isinstance(kw.value, ast.Constant)
                         and kw.value.value == SINGLE_OBJECTIVE_NAME):
                     got = getattr(kw.value, "value", "<non-literal>")
                     wrong.append(f"{rel(path)}:{call.lineno}: name={got!r}")
     assert not wrong, (
-        f"ObjectiveValue must be named {SINGLE_OBJECTIVE_NAME!r}:\n" + "\n".join(wrong))
+        f"ObjectiveValue must be named {SINGLE_OBJECTIVE_NAME!r} for single-objective "
+        f"benchmarks, or f\"f{{i}}\" for multi-objective benchmarks:\n" + "\n".join(wrong))
 
 
 def test_evaluation_result_shape_is_what_services_assume():
