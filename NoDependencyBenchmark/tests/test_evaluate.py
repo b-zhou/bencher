@@ -188,7 +188,7 @@ class TestMopta08Constrained:
 
 
 class TestREProblems:
-    """Multi-objective RE problems (Tanabe & Ishibuchi, 2020), see re_problems.py."""
+    """Multi-objective RE problems, see re_problems.py."""
 
     @pytest.mark.parametrize("name", sorted(RE_PROBLEMS))
     def test_declared_dimension_matches_the_problem(self, name):
@@ -196,6 +196,8 @@ class TestREProblems:
 
     @pytest.mark.parametrize("name", sorted(RE_PROBLEMS))
     def test_returns_numbered_finite_objectives(self, servicer, name):
+        """The returned EvaluationResult has the right number of objectives, named f0,
+        f1, ..., and they are finite."""
         n_objectives = RE_PROBLEMS[name]().n_objectives
         result = servicer.evaluate(name, np.full(BENCHMARKS[name]["dimensions"], 0.5))
         assert [o.name for o in result.objectives] == [f"f{i}" for i in range(n_objectives)]
@@ -219,6 +221,7 @@ class TestREProblems:
 
     @pytest.mark.parametrize("name", sorted(RE_PROBLEMS))
     def test_is_deterministic(self, servicer, name):
+        """CarCabDesign is stochastic, the seed should make it deterministic."""
         x = np.full(BENCHMARKS[name]["dimensions"], 0.3)
         seed = 7 if name == "car-cab-design" else None
         assert servicer.evaluate(name, x, seed=seed) == servicer.evaluate(name, x, seed=seed)

@@ -43,17 +43,18 @@ BENCHMARKS = {
     # Multi-objective real-world problems of the RE suite (Tanabe & Ishibuchi,
     # 2020), see re_problems.py.
     # The mixed-integer and integer problems are not used.
-    # VehicleSafety, CarSideImpact, and WeldedBeam have botorch implementations, so they are not served here.
+    # VehicleSafety, CarSideImpact, and WeldedBeam have botorch implementations,
+    # so they are not served here.
+    # DiscBrake also has a botorch implementation, but it has a bug from the
+    # upstream repo (https://github.com/ryojitanabe/reproblems/issues/9),
+    # so we serve the fixed RE version here.
     "four-bar-truss": {"dimensions": 4, "type": "purely_continuous"},
     "hatch-cover": {"dimensions": 2, "type": "purely_continuous"},
     "two-bar-truss": {"dimensions": 3, "type": "purely_continuous"},
-    # The botorch version of DiscBrake has a bug, so we serve the fixed RE version here.
     "disc-brake": {"dimensions": 4, "type": "purely_continuous"},
     "rocket-injector": {"dimensions": 4, "type": "purely_continuous"},
     "conceptual-marine-design": {"dimensions": 6, "type": "purely_continuous"},
-    # RE61 with constraint g6 fixed (divides by x1*x2, as in the original problem).
     "water-resource-planning": {"dimensions": 3, "type": "purely_continuous"},
-    # RE91 is stochastic; random_seed makes it repeatable.
     "car-cab-design": {"dimensions": 7, "type": "purely_continuous"},
 }
 
